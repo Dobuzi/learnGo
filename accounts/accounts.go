@@ -1,6 +1,9 @@
 package accounts
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // Account : banking account
 type Account struct {
@@ -33,4 +36,18 @@ func (a *Account) Withdraw(amount int) error {
 	}
 	a.balance -= amount
 	return nil
+}
+
+// ChangeOwner : change the owner
+func (a *Account) ChangeOwner(newOwner string) {
+	a.owner = newOwner
+}
+
+// ShowOwner : show owner's name
+func (a Account) ShowOwner() string {
+	return a.owner
+}
+
+func (a Account) String() string {
+	return fmt.Sprint(a.ShowOwner(), "'s account\nHas: ", a.ShowBalance())
 }

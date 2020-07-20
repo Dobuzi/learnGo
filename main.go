@@ -1,44 +1,45 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-
-	"github.com/Dobuzi/learnGo/mydict"
+	"net/http"
 )
 
+var errRequestFailed = errors.New("Request failed")
+
 func main() {
-	dictionary := mydict.Dictionary{}
-	word := "hello"
-	word2 := "hallo"
-	definition := "Greeting"
-	definition2 := "Insa"
-	definition3 := "German Greeting"
-	err := dictionary.Add(word, definition)
-	if err != nil {
-		fmt.Println(err)
+	var results = make(map[string]string)
+	urls := []string{
+		"https://www.google.com/",
+		"https://www.airbnb.com/",
+		"https://www.amazon.com/",
+		"https://www.reddit.com/",
+		"https://www.google.com/",
+		"https://soundcloud.com/",
+		"https://www.facebook.com/",
+		"https://www.instagram.com/",
+		"https://academy.nomadcoders.co/",
 	}
-	err22 := dictionary.Add(word2, definition3)
-	if err22 != nil {
-		fmt.Println(err22)
+	for _, url := range urls {
+		result := "OK"
+		err := hitURL(url)
+		if err != nil {
+			result = "Failed"
+		}
+		results[url] = result
 	}
-	hello, _ := dictionary.Search(word)
-	fmt.Println("found", word, ", definition:", hello)
-	err2 := dictionary.Add(word, definition)
-	if err2 != nil {
-		fmt.Println(err2)
+	for url, result := range results {
+		fmt.Println(url, result)
 	}
-	err3 := dictionary.Update(word, definition2)
-	if err3 != nil {
-		fmt.Println(err3)
-	} else {
-		fmt.Println(dictionary)
-	}
+}
 
-	err4 := dictionary.Delete(word)
-	if err4 != nil {
-		fmt.Println(err4)
-	} else {
-		fmt.Println(dictionary)
+func hitURL(url string) error {
+	fmt.Println("Checking:", url)
+	resp, err := http.Get(url)
+	if err != nil || resp.StatusCode >= 400 {
+		fmt.Println(err, resp.StatusCode)
+		return errRequestFailed
 	}
-
+	return nil
 }
